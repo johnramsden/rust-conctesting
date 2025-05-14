@@ -19,7 +19,6 @@ impl Disk {
         let handle = OpenOptions::new()
             .read(true)
             .write(true)
-            .custom_flags(libc::O_DIRECT | libc::O_SYNC)
             .open(device)?;
         let fd = handle.as_raw_fd();
 
@@ -38,15 +37,15 @@ impl Disk {
             size,
         })
     }
-    fn write(&mut self, data: &[u8], offset: u64) -> Result<usize, io::Error> {
+    pub fn write(&mut self, data: &[u8], offset: u64) -> Result<usize, io::Error> {
         self.handle.write_at(data, offset)
     }
 
-    fn read(&mut self, data: &mut [u8], offset: u64) -> Result<usize, io::Error> {
+    pub fn read(&mut self, data: &mut [u8], offset: u64) -> Result<usize, io::Error> {
         self.handle.read_at(data, offset)
     }
     
-    fn get_size(&self) -> u64 {
+    pub fn get_size(&self) -> u64 {
         self.size
     }
 }
