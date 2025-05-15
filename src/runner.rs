@@ -1,15 +1,17 @@
 use std::error::Error;
-use crate::disk::Disk;
+use super::disk::Disk;
 
 const BLOCK_SIZE: u64 = 4096;
 const CHUNKS: u64 = 1000;
 
 pub struct SequentialRunner {}
+pub struct ThreadedRunner {}
 
 impl SequentialRunner {
-    pub fn new() -> Self {
-        SequentialRunner {}
-    }
+    pub fn new() -> Self { SequentialRunner {} }
+}
+impl ThreadedRunner {
+    pub fn new() -> Self { ThreadedRunner {} }
 }
 
 pub trait Runner {
@@ -49,5 +51,11 @@ impl Runner for SequentialRunner {
         }
 
         Ok(())
+    }
+}
+
+impl Runner for ThreadedRunner {
+    fn run(&self, disk: &mut Disk) -> Result<(), Box<dyn Error>> {
+        unimplemented!()
     }
 }
