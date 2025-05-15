@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 libc = "1.0.0-alpha.1"
 nix = { version = "0.30.1", features = ["ioctl"] }
+crossbeam-channel = "0.5.15"

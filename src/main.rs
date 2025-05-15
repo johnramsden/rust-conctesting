@@ -1,5 +1,6 @@
 use conc::disk;
-use conc::runner::{Runner, SequentialRunner};
+use conc::runner::{Runner};
+use conc::runner::sequential::SequentialRunner;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut disk = disk::Disk::new("/dev/zd32")?;

@@ -1,40 +1,19 @@
 use std::error::Error;
-use super::disk::Disk;
+use crate::disk::Disk;
+use crate::runner::Runner;
 
-const BLOCK_SIZE: u64 = 4096;
-const CHUNKS: u64 = 1000;
+use super::{BLOCK_SIZE, CHUNKS};
 
 pub struct SequentialRunner {}
-pub struct ThreadedRunner {}
 
 impl SequentialRunner {
     pub fn new() -> Self { SequentialRunner {} }
-}
-impl ThreadedRunner {
-    pub fn new() -> Self { ThreadedRunner {} }
-}
-
-pub trait Runner {
-    fn run(&self, disk: &mut Disk) -> Result<(), Box<dyn Error>>;
-
-    fn get_buffer(pattern: u32) -> Vec<u8> {
-        let repeats = 4096 / std::mem::size_of::<u32>();
-        let mut buffer = Vec::with_capacity(4096);
-
-        for _ in 0..repeats {
-            buffer.extend_from_slice(&pattern.to_ne_bytes());
-        }
-
-        assert_eq!(buffer.len(), 4096);
-
-        buffer
-    }
 }
 
 impl Runner for SequentialRunner {    
     fn run(&self, disk: &mut Disk) -> Result<(), Box<dyn Error>> {
         let disk_sz = disk.get_size();
-        if disk_sz < (BLOCK_SIZE * CHUNKS) as u64 {
+        if disk_sz < (BLOCK_SIZE * CHUNKS) {
             return Err("Disk size is too small".into());
         }
 
@@ -51,11 +30,5 @@ impl Runner for SequentialRunner {
         }
 
         Ok(())
-    }
-}
-
-impl Runner for ThreadedRunner {
-    fn run(&self, disk: &mut Disk) -> Result<(), Box<dyn Error>> {
-        unimplemented!()
     }
 }
