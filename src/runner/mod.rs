@@ -1,6 +1,8 @@
 pub mod sequential;
 pub mod threaded;
 
+pub mod asyncrunner;
+
 use std::error::Error;
 use std::sync::{Arc, Mutex};
 use super::disk::Disk;

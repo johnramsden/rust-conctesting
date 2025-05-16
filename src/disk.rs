@@ -1,9 +1,10 @@
 use std::fs::File;
-use std::io;
+use std::{io, thread};
 use std::fs::OpenOptions;
 use std::os::unix::fs::OpenOptionsExt;
 use std::os::unix::fs::FileExt;
 use std::os::unix::io::AsRawFd;
+use std::time::Duration;
 use nix::ioctl_read;
 
 pub struct Disk {
@@ -38,7 +39,9 @@ impl Disk {
         })
     }
     pub fn write(&mut self, data: &[u8], offset: u64) -> Result<usize, io::Error> {
-        self.handle.write_at(data, offset)
+        let sz = self.handle.write_at(data, offset)?;
+        thread::sleep(Duration::from_millis(25));
+        Ok(sz)
     }
 
     pub fn read(&mut self, data: &mut [u8], offset: u64) -> Result<usize, io::Error> {

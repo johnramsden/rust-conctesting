@@ -48,7 +48,7 @@ impl Runner for ThreadedRunner {
         
         let mut writer_threads = Vec::new();
         
-        for _ in 0..WRITER_THREADS {
+        for i in 0..WRITER_THREADS {
             writer_threads.push(thread::spawn({
                 let sender = sender.clone();
                 let workload = Arc::clone(&workload);
@@ -62,7 +62,7 @@ impl Runner for ThreadedRunner {
 
                         match val {
                             Some(val) => {
-                                println!("Writing {} bytes at address {:#x}", BLOCK_SIZE, val.addr);
+                                println!("[W.{}] Writing {} bytes at address {:#x}", i, BLOCK_SIZE, val.addr);
                                 let mut d = disk.lock().unwrap();
                                 if let Err(e) = d.write(val.payload.as_slice(), val.addr) {
                                     eprintln!("Write failed: {:?}", e);
@@ -80,7 +80,7 @@ impl Runner for ThreadedRunner {
 
         let toread = Arc::new(Mutex::new(CHUNKS));
         
-        for _ in 0..READER_THREADS {
+        for i in 0..READER_THREADS {
             reader_threads.push(thread::spawn({
                 let receiver = receiver.clone();
                 let disk = Arc::clone(&disk);
@@ -102,7 +102,7 @@ impl Runner for ThreadedRunner {
                             eprintln!("Read failed: {:?}", e);
                         }
                         assert_eq!(q.payload.as_slice(), data_read);
-                        println!("Read data from {:#x}", q.addr);
+                        println!("[R.{}] Read data from {:#x}", i, q.addr);
                     }
                 }
             }));
