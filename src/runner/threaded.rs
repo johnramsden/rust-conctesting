@@ -3,10 +3,10 @@ use std::error::Error;
 use std::sync::{Arc, Mutex};
 use crate::disk::Disk;
 use crate::runner::Runner;
+use rayon::prelude::*;
 
 use std::thread;
 use crossbeam_channel::{unbounded, Receiver, Sender};
-use crate::runner::sequential::SequentialRunner;
 use super::{BLOCK_SIZE, CHUNKS};
 
 const READER_THREADS: usize = 14;
@@ -30,17 +30,12 @@ impl Runner for ThreadedRunner {
             return Err("Disk size is too small".into());
         }
         
-        let mut deque: VecDeque<Query> = VecDeque::with_capacity(CHUNKS as usize);
-        
-        for i in 0..CHUNKS {
-            let addr: u64 = i * BLOCK_SIZE;
+        let deque: VecDeque<Query> = (0..CHUNKS).into_par_iter().map(|i| {
+            let addr = i * BLOCK_SIZE;
             println!("Writing {} bytes to chunk {} at address {:#x}", BLOCK_SIZE, i, addr);
             let bufvec = ThreadedRunner::get_buffer(i as u32);
-            deque.push_back(Query {
-                addr: addr,
-                payload: bufvec
-            });
-        }
+            Query { addr, payload: bufvec }
+        }).collect();
 
         let workload = Arc::new(Mutex::new(deque));
         

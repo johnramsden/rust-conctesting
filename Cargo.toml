@@ -7,4 +7,6 @@ edition = "2021"
 libc = "1.0.0-alpha.1"
 nix = { version = "0.30.1", features = ["ioctl", "uio"] }
 crossbeam-channel = "0.5.15"
-tokio = {  version = "1.45.0", features = ["rt", "rt-multi-thread", "sync"] }
+tokio = {  version = "1.45.0", features = ["rt", "rt-multi-thread", "sync", "time"] }
+rayon = "1.10.0"
+futures = "0.3.31"

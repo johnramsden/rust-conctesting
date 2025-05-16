@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use crate::disk::Disk;
 use crate::runner::Runner;
 

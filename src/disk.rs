@@ -7,6 +7,7 @@ use std::os::unix::io::AsRawFd;
 use std::time::Duration;
 use nix::ioctl_read;
 use nix::sys::uio::pwrite;
+use tokio::time::sleep;
 
 pub struct Disk {
     handle: File,
@@ -41,7 +42,7 @@ impl Disk {
     }
     pub fn write(&self, data: &[u8], offset: u64) -> Result<usize, io::Error> {
         let sz = pwrite(&self.handle, data, offset as i64)
-            .map_err(|e| std::io::Error::from_raw_os_error(e as i32));
+            .map_err(|e| io::Error::from_raw_os_error(e as i32));
         thread::sleep(Duration::from_millis(25));
         sz
     }

@@ -1,6 +1,7 @@
 pub mod sequential;
 pub mod threaded;
 
+pub mod greenrunner;
 pub mod asyncrunner;
 
 use std::error::Error;
