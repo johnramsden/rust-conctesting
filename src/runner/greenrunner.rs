@@ -30,7 +30,7 @@ impl Runner for GreenRunner {
 
         let runtime = Builder::new_multi_thread()
             .worker_threads(32)
-            .thread_name("AsyncRunner")
+            .thread_name("GreenRunner")
             .build()
             .unwrap();
 
