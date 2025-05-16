@@ -1,4 +1,4 @@
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use conc::disk;
 use conc::runner::{Runner};
 use conc::runner::greenrunner::GreenRunner;
