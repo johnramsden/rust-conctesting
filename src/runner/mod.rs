@@ -11,7 +11,7 @@ const BLOCK_SIZE: u64 = 4096;
 const CHUNKS: u64 = 1000;
 
 pub trait Runner {
-    fn run(&self, disk: Arc<Mutex<Disk>>) -> Result<(), Box<dyn Error>>;
+    fn run(&self, disk: Arc<Disk>) -> Result<(), Box<dyn Error>>;
 
     fn get_buffer(pattern: u32) -> Vec<u8> {
         let repeats = 4096 / std::mem::size_of::<u32>();

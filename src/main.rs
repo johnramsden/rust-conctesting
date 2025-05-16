@@ -9,7 +9,7 @@ use std::time::Instant;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let disk = disk::Disk::new("/dev/zd32")?;
-    let wrapped_disk = Arc::new(Mutex::new(disk));
+    let wrapped_disk = Arc::new(disk);
 
     let seqt = Instant::now();
     

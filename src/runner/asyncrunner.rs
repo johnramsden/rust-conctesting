@@ -28,8 +28,8 @@ struct Query {
 }
 
 impl Runner for AsyncRunner {
-    fn run(&self, disk: Arc<Mutex<Disk>>) -> Result<(), Box<dyn Error>> {
-        let disk_sz = disk.lock().unwrap().get_size();
+    fn run(&self, disk: Arc<Disk>) -> Result<(), Box<dyn Error>> {
+        let disk_sz = disk.get_size();
         if disk_sz < (BLOCK_SIZE * CHUNKS) {
             return Err("Disk size is too small".into());
         }
@@ -55,8 +55,7 @@ impl Runner for AsyncRunner {
                             payload: bufvec,
                         };
                         println!("[W.{}] Writing {} bytes at address {:#x}", i, BLOCK_SIZE, q.addr);
-                        let mut d = disk.lock().unwrap();
-                        if let Err(e) = d.write(q.payload.as_slice(), q.addr) {
+                        if let Err(e) = disk.write(q.payload.as_slice(), q.addr) {
                             eprintln!("Write failed: {:?}", e);
                         }
                         tx.send(q)
@@ -68,9 +67,8 @@ impl Runner for AsyncRunner {
                     async move {
                         match rx.await {
                             Ok(q) => {
-                                let mut d = disk.lock().unwrap();
                                 let data_read: &mut [u8] = &mut [0u8; BLOCK_SIZE as usize];
-                                if let Err(e) = d.read(data_read, q.addr) {
+                                if let Err(e) = disk.read(data_read, q.addr) {
                                     eprintln!("Read failed: {:?}", e);
                                 }
                                 assert_eq!(q.payload.as_slice(), data_read);

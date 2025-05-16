@@ -12,9 +12,8 @@ impl SequentialRunner {
 }
 
 impl Runner for SequentialRunner {    
-    fn run(&self, disk: Arc<Mutex<Disk>>) -> Result<(), Box<dyn Error>> {
-        let mut disk = disk.lock().unwrap();
-        
+    fn run(&self, disk: Arc<Disk>) -> Result<(), Box<dyn Error>> {
+       
         let disk_sz = disk.get_size();
         if disk_sz < (BLOCK_SIZE * CHUNKS) {
             return Err("Disk size is too small".into());

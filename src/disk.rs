@@ -6,6 +6,7 @@ use std::os::unix::fs::FileExt;
 use std::os::unix::io::AsRawFd;
 use std::time::Duration;
 use nix::ioctl_read;
+use nix::sys::uio::pwrite;
 
 pub struct Disk {
     handle: File,
@@ -38,13 +39,14 @@ impl Disk {
             size,
         })
     }
-    pub fn write(&mut self, data: &[u8], offset: u64) -> Result<usize, io::Error> {
-        let sz = self.handle.write_at(data, offset)?;
+    pub fn write(&self, data: &[u8], offset: u64) -> Result<usize, io::Error> {
+        let sz = pwrite(&self.handle, data, offset as i64)
+            .map_err(|e| std::io::Error::from_raw_os_error(e as i32));
         thread::sleep(Duration::from_millis(25));
-        Ok(sz)
+        sz
     }
 
-    pub fn read(&mut self, data: &mut [u8], offset: u64) -> Result<usize, io::Error> {
+    pub fn read(&self, data: &mut [u8], offset: u64) -> Result<usize, io::Error> {
         self.handle.read_at(data, offset)
     }
     
